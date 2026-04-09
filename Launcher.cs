@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace RageMPdevLauncher
@@ -40,20 +41,30 @@ namespace RageMPdevLauncher
                     }
                 }
             }
-            catch (Exception ex)  //just for demonstration...it's always best to handle specific exceptions
+            catch (Exception ex)
             {
-                //react appropriately
+                MessageBox.Show("An error occurred while reading the registry: " + ex.Message);
             }
         }
 
         private void launch_Click(object sender, EventArgs e)
         {
+            const int ERROR_CANCELLED = 1223; //The operation was canceled by the user.
+
+            ProcessStartInfo info = new ProcessStartInfo(@"C:\RAGEMP\updater.exe");
+            info.WorkingDirectory = @"C:\RAGEMP\";
+            info.UseShellExecute = true;
+            info.Verb = "runas";
             try
             {
-                Process.Start("C:\\RAGEMP\\update.exe");
+                Process.Start(info);
             }
-            catch (Exception ex)
+            catch (Win32Exception ex)
             {
+                if (ex.NativeErrorCode == ERROR_CANCELLED)
+                    MessageBox.Show("RAGE MP requires admin rights to run.");
+                else
+                    throw;
             }
         }
 
@@ -70,6 +81,7 @@ namespace RageMPdevLauncher
             }
             catch (Exception ex)
             {
+                MessageBox.Show("An error occurred while setting the registry: " + ex.Message);
             }
         }
 
@@ -86,6 +98,7 @@ namespace RageMPdevLauncher
             }
             catch (Exception ex)
             {
+                MessageBox.Show("An error occurred while setting the registry: " + ex.Message);
             }
         }
 
@@ -114,7 +127,7 @@ namespace RageMPdevLauncher
             }
             catch (Exception ex)  //just for demonstration...it's always best to handle specific exceptions
             {
-                //react appropriately
+                MessageBox.Show("An error occurred while setting the registry: " + ex.Message);
             }
         }
     }

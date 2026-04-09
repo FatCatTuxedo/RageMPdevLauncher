@@ -101,8 +101,10 @@
             Controls.Add(launch);
             Controls.Add(cefDebug);
             Controls.Add(groupBox1);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "RAGEMPdevLauncher";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "RAGE MP Dev Launcher";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
