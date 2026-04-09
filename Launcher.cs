@@ -18,7 +18,7 @@ namespace RageMPdevLauncher
                     if (key != null)
                     {
                         game_v_path = key.GetValue("game_v_path") as string;
-                        cefPort = key.GetValue("cef_port") as string;
+                        cefPort = key.GetValue("launch.cefPort") as string;
                         if (cefPort != null)
                         {
                             cefDebug.Checked = true;
@@ -111,7 +111,7 @@ namespace RageMPdevLauncher
                     using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(@"Software\RAGE-MP", true);
                     if (myKey != null)
                     {
-                        myKey.SetValue("cef_port", "6969", RegistryValueKind.String);
+                        myKey.SetValue("launch.cefPort", "6969", RegistryValueKind.String);
                         myKey.Close();
                     }
                 }
@@ -120,7 +120,7 @@ namespace RageMPdevLauncher
                     using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(@"Software\RAGE-MP", true);
                     if (myKey != null)
                     {
-                        myKey.DeleteValue("cef_port", false);
+                        myKey.DeleteValue("launch.cefPort", false);
                         myKey.Close();
                     }
                 }
