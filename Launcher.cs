@@ -1,61 +1,84 @@
 using Microsoft.Win32;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 
 namespace RageMPdevLauncher
 {
     public partial class RAGEMPdevLauncher : Form
     {
-        string subKeyPath = "Software\\RAGE-MP";
-        string? legacyPath = ConfigurationManager.AppSettings["legacy_path"];
-        string? enhancedPath = ConfigurationManager.AppSettings["enhanced_path"];
-        string? ragempPath = ConfigurationManager.AppSettings["ragemp_path"];
-        string? cefPort = ConfigurationManager.AppSettings["cef_port"];
+        private const string SubKeyPath = "Software\\RAGE-MP";
+        private bool isInitializing = false;
+
+        private string? legacyPath;
+        private string? enhancedPath;
+        private string? cefPort;
+        private string? ragempPath;
+
         public RAGEMPdevLauncher()
         {
             InitializeComponent();
-            string? game_v_path = null;
-            string? cefPort = null;
-            ragemp_path_label.Text = ragempPath != null ? ragempPath : "Not Set";
-            legacyPathLabel.Text = legacyPath != null ? legacyPath : "Not Set";
-            enhancedPathLabel.Text = enhancedPath != null ? enhancedPath : "Not Set";
+
+            isInitializing = true;
             try
             {
-                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(subKeyPath))
-                {
-                    if (key != null)
-                    {
-                        game_v_path = key.GetValue("game_v_path") as string;
-                        cefPort = key.GetValue("launch.cefPort") as string;
-                        if (cefPort != null)
-                        {
-                            cefDebug.Checked = true;
-                        }
-                        if (game_v_path != null)
-                        {
-                            if (game_v_path.Contains("Enhanced"))
-                            {
-                                enhanced.Checked = true;
-                            }
-                            else
-                            {
-                                legacy.Checked = true;
-                            }
-                        }
-                        else
-                        {
-                            legacy.Checked = true;
-                        }
-                    }
-                    else
-                        MessageBox.Show("An error occurred while reading the registry: RageMP key not found");
-                }
+                LoadRegistryValues();
+                ApplyValuesToUi();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while reading the registry: " + ex.Message);
             }
+            finally
+            {
+                isInitializing = false;
+            }
+        }
+
+        private void LoadRegistryValues()
+        {
+            using RegistryKey? key = Registry.CurrentUser.OpenSubKey(SubKeyPath);
+            if (key is null)
+            {
+                MessageBox.Show("An error occurred while reading the registry: RageMP key not found");
+                return;
+            }
+
+            legacyPath = key.GetValue("legacy_path") as string;
+            enhancedPath = key.GetValue("enhanced_path") as string;
+            string? gameVPath = key.GetValue("game_v_path") as string;
+            cefPort = key.GetValue("launch.cefPort") as string;
+            ragempPath = key.GetValue("rage_path") as string;
+
+            if (ragempPath is null)
+                MessageBox.Show("RAGEMP Path is not set in the registry. Is RAGEMP installed?");
+
+            if (enhancedPath is null)
+                MessageBox.Show("GTA V Enhanced Path is not set in the registry. Please set it in settings tab.");
+
+            if (legacyPath is null)
+                MessageBox.Show("GTA V Legacy Path is not set in the registry. Please set it in settings tab.");
+
+            // Set which game version is selected by registry value
+            if (!string.IsNullOrEmpty(gameVPath))
+            {
+                if (gameVPath.Contains("Enhanced", StringComparison.OrdinalIgnoreCase))
+                    enhanced.Checked = true;
+                else
+                    legacy.Checked = true;
+            }
+            else
+            {
+                legacy.Checked = true;
+            }
+
+            if (!string.IsNullOrEmpty(cefPort))
+                cefDebug.Checked = true;
+        }
+
+        private void ApplyValuesToUi()
+        {
+            legacyPathLabel.Text = legacyPath ?? "Not Set";
+            enhancedPathLabel.Text = enhancedPath ?? "Not Set";
         }
 
         private void launch_Click(object sender, EventArgs e)
@@ -65,12 +88,23 @@ namespace RageMPdevLauncher
                 MessageBox.Show("RAGEMP Path is not set in the configuration file.");
                 return;
             }
-            const int ERROR_CANCELLED = 1223; //The operation was canceled by the user.
 
-            ProcessStartInfo info = new ProcessStartInfo($@"{ragempPath}\updater.exe");
-            info.WorkingDirectory = ragempPath;
-            info.UseShellExecute = true;
-            info.Verb = "runas";
+            string updater = Path.Combine(ragempPath, "updater.exe");
+            if (!File.Exists(updater))
+            {
+                MessageBox.Show("Updater not found at: " + updater);
+                return;
+            }
+
+            const int ERROR_CANCELLED = 1223; // The operation was canceled by the user.
+
+            ProcessStartInfo info = new ProcessStartInfo(updater)
+            {
+                WorkingDirectory = ragempPath,
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+
             try
             {
                 Process.Start(info);
@@ -80,12 +114,14 @@ namespace RageMPdevLauncher
                 if (ex.NativeErrorCode == ERROR_CANCELLED)
                     MessageBox.Show("RAGE MP requires admin rights to run.");
                 else
-                    throw;
+                    MessageBox.Show("Error Launching RAGE MP: " + ex.Message);
             }
         }
 
         private void legacy_CheckedChanged(object sender, EventArgs e)
         {
+            if (isInitializing) return;
+
             try
             {
                 if (string.IsNullOrEmpty(legacyPath))
@@ -93,12 +129,9 @@ namespace RageMPdevLauncher
                     MessageBox.Show("Legacy Path is not set in the configuration file.");
                     return;
                 }
-                using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(subKeyPath, true);
-                if (myKey != null)
-                {
-                    myKey.SetValue("game_v_path", legacyPath, RegistryValueKind.String);
-                    myKey.Close();
-                }
+
+                if (legacy.Checked)
+                    SetRegistryValue("game_v_path", legacyPath);
             }
             catch (Exception ex)
             {
@@ -108,6 +141,8 @@ namespace RageMPdevLauncher
 
         private void enhanced_CheckedChanged(object sender, EventArgs e)
         {
+            if (isInitializing) return;
+
             try
             {
                 if (string.IsNullOrEmpty(enhancedPath))
@@ -115,12 +150,9 @@ namespace RageMPdevLauncher
                     MessageBox.Show("Enhanced Path is not set in the configuration file.");
                     return;
                 }
-                using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(subKeyPath, true);
-                if (myKey != null)
-                {
-                    myKey.SetValue("game_v_path", enhancedPath, RegistryValueKind.String);
-                    myKey.Close();
-                }
+
+                if (enhanced.Checked)
+                    SetRegistryValue("game_v_path", enhancedPath);
             }
             catch (Exception ex)
             {
@@ -130,117 +162,109 @@ namespace RageMPdevLauncher
 
         private void cefDebug_CheckedChanged(object sender, EventArgs e)
         {
+            if (isInitializing) return;
+
             try
             {
-                if (string.IsNullOrEmpty(cefPort))
-                {
-                    MessageBox.Show("CEF Port is not set in the configuration file.");
-                    return;
-                }
+
                 if (cefDebug.Checked)
-                {
-                    using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(subKeyPath, true);
-                    if (myKey != null)
-                    {
-                        myKey.SetValue("launch.cefPort", cefPort, RegistryValueKind.String);
-                        myKey.Close();
-                    }
-                }
+                    SetRegistryValue("launch.cefPort", "6969");
                 else
-                {
-                    using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(subKeyPath, true);
-                    if (myKey != null)
-                    {
-                        myKey.DeleteValue("launch.cefPort", false);
-                        myKey.Close();
-                    }
-                }
+                    DeleteRegistryValue("launch.cefPort");
             }
-            catch (Exception ex)  //just for demonstration...it's always best to handle specific exceptions
+            catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while setting the registry: " + ex.Message);
             }
         }
 
-        private void settingsRagePath_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog folderDlg = new FolderBrowserDialog();
-            folderDlg.ShowNewFolderButton = false;
-            folderDlg.UseDescriptionForTitle = true;
-            folderDlg.Description = "Select your RAGE MP folder (where updater.exe is located)";
-            folderDlg.SelectedPath = ragempPath != null ? ragempPath : Environment.SpecialFolder.MyComputer.ToString();
-            DialogResult result = folderDlg.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                if (File.Exists(folderDlg.SelectedPath + "/updater.exe"))
-                {
-                    MessageBox.Show("RAGE MP Path set to: " + folderDlg.SelectedPath);
-                    ragempPath = folderDlg.SelectedPath;
-                    ConfigurationManager.AppSettings["ragemp_path"] = ragempPath;
-                }
-                else
-                {
-                    MessageBox.Show("The selected folder does not contain updater.exe. Please select the correct RAGE MP folder.");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Cancelled, the path was not changed.");
-            }
-        }
-
         private void settingsEnhancedPath_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderDlg = new FolderBrowserDialog();
-            folderDlg.ShowNewFolderButton = false;
-            folderDlg.UseDescriptionForTitle = true;
-            folderDlg.Description = "Select your GTA V Enhanced folder (where GTA5_Enhanced.exe is located)";
-            folderDlg.SelectedPath = enhancedPath != null ? enhancedPath : Environment.SpecialFolder.MyComputer.ToString();
-            DialogResult result = folderDlg.ShowDialog();
-            if (result == DialogResult.OK)
+            try
             {
-                if (File.Exists(folderDlg.SelectedPath + "/GTA5_Enhanced.exe"))
+                using FolderBrowserDialog folderDlg = new FolderBrowserDialog
                 {
-                    MessageBox.Show("GTA V Enhanced Path set to: " + folderDlg.SelectedPath);
-                    enhancedPath = folderDlg.SelectedPath;
-                    ConfigurationManager.AppSettings["enhanced_path"] = enhancedPath;
+                    ShowNewFolderButton = false,
+                    UseDescriptionForTitle = true,
+                    Description = "Select your GTA V Enhanced folder (where GTA5_Enhanced.exe is located)",
+                    SelectedPath = enhancedPath ?? string.Empty
+                };
+
+                if (folderDlg.ShowDialog() == DialogResult.OK)
+                {
+                    string candidate = Path.Combine(folderDlg.SelectedPath, "GTA5_Enhanced.exe");
+                    if (File.Exists(candidate))
+                    {
+                        enhancedPath = folderDlg.SelectedPath;
+                        //MessageBox.Show("GTA V Enhanced Path set to: " + enhancedPath);
+                        SetRegistryValue("enhanced_path", enhancedPath);
+                        enhancedPathLabel.Text = enhancedPath;
+                    }
+                    else
+                    {
+                        MessageBox.Show("The selected folder does not contain GTA5_Enhanced.exe. Please select the correct GTA V Enhanced folder.");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("The selected folder does not contain GTA5_Enhanced.exe. Please select the correct GTA V Enhanced folder.");
+                    MessageBox.Show("Cancelled, the path was not changed.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Cancelled, the path was not changed.");
+                MessageBox.Show("An error occurred while setting the path: " + ex.Message);
             }
         }
 
         private void settingsLegacyPath_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderDlg = new FolderBrowserDialog();
-            folderDlg.ShowNewFolderButton = false;
-            folderDlg.UseDescriptionForTitle = true;
-            folderDlg.Description = "Select your GTA V Legacy folder (where GTA5.exe is located)";
-            folderDlg.SelectedPath = legacyPath != null ? legacyPath : Environment.SpecialFolder.MyComputer.ToString();
-            DialogResult result = folderDlg.ShowDialog();
-            if (result == DialogResult.OK)
+            try
             {
-                if (File.Exists(folderDlg.SelectedPath + "/GTA5.exe"))
+                using FolderBrowserDialog folderDlg = new FolderBrowserDialog
                 {
-                    MessageBox.Show("GTA V Legacy Path set to: " + folderDlg.SelectedPath);
-                    legacyPath = folderDlg.SelectedPath;
-                    ConfigurationManager.AppSettings["legacy_path"] = legacyPath;
+                    ShowNewFolderButton = false,
+                    UseDescriptionForTitle = true,
+                    Description = "Select your GTA V Legacy folder (where GTA5.exe is located)",
+                    SelectedPath = legacyPath ?? string.Empty
+                };
+
+                if (folderDlg.ShowDialog() == DialogResult.OK)
+                {
+                    string candidate = Path.Combine(folderDlg.SelectedPath, "GTA5.exe");
+                    if (File.Exists(candidate))
+                    {
+                        legacyPath = folderDlg.SelectedPath;
+                        //MessageBox.Show("GTA V Legacy Path set to: " + legacyPath);
+                        SetRegistryValue("legacy_path", legacyPath);
+                        legacyPathLabel.Text = legacyPath;
+                    }
+                    else
+                    {
+                        MessageBox.Show("The selected folder does not contain GTA5.exe. Please select the correct GTA V Legacy folder.");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("The selected folder does not contain GTA5.exe. Please select the correct GTA V Legacy folder.");
+                    MessageBox.Show("Cancelled, the path was not changed.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Cancelled, the path was not changed.");
+                MessageBox.Show("An error occurred while setting the path: " + ex.Message);
             }
+        }
+
+        // Registry helper methods
+        private void SetRegistryValue(string name, string? value)
+        {
+            using RegistryKey? key = Registry.CurrentUser.CreateSubKey(SubKeyPath);
+            key?.SetValue(name, value ?? string.Empty, RegistryValueKind.String);
+        }
+
+        private void DeleteRegistryValue(string name)
+        {
+            using RegistryKey? key = Registry.CurrentUser.OpenSubKey(SubKeyPath, writable: true);
+            key?.DeleteValue(name, throwOnMissingValue: false);
         }
     }
 }

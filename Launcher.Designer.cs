@@ -44,9 +44,6 @@
             groupBox3 = new GroupBox();
             enhancedPathLabel = new Label();
             settingsEnhancedPath = new Button();
-            groupBox2 = new GroupBox();
-            ragemp_path_label = new Label();
-            settingsRagePath = new Button();
             groupBox1.SuspendLayout();
             tabControl.SuspendLayout();
             LauncherPage.SuspendLayout();
@@ -54,7 +51,6 @@
             SettingsPage.SuspendLayout();
             groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
-            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -63,7 +59,7 @@
             groupBox1.Controls.Add(legacy);
             groupBox1.Location = new Point(6, 6);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(376, 82);
+            groupBox1.Size = new Size(106, 82);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Game Version";
@@ -95,7 +91,7 @@
             // cefDebug
             // 
             cefDebug.AutoSize = true;
-            cefDebug.Location = new Point(393, 19);
+            cefDebug.Location = new Point(6, 91);
             cefDebug.Name = "cefDebug";
             cefDebug.Size = new Size(101, 19);
             cefDebug.TabIndex = 1;
@@ -105,9 +101,10 @@
             // 
             // launch
             // 
-            launch.Location = new Point(388, 44);
+            launch.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            launch.Location = new Point(140, 28);
             launch.Name = "launch";
-            launch.Size = new Size(136, 41);
+            launch.Size = new Size(238, 54);
             launch.TabIndex = 2;
             launch.Text = "Launch RAGE MP";
             launch.UseVisualStyleBackColor = true;
@@ -120,7 +117,7 @@
             tabControl.Location = new Point(12, 12);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
-            tabControl.Size = new Size(538, 202);
+            tabControl.Size = new Size(530, 141);
             tabControl.TabIndex = 3;
             // 
             // LauncherPage
@@ -132,7 +129,7 @@
             LauncherPage.Location = new Point(4, 24);
             LauncherPage.Name = "LauncherPage";
             LauncherPage.Padding = new Padding(3);
-            LauncherPage.Size = new Size(530, 174);
+            LauncherPage.Size = new Size(522, 113);
             LauncherPage.TabIndex = 0;
             LauncherPage.Text = "Launcher";
             LauncherPage.UseVisualStyleBackColor = true;
@@ -140,9 +137,9 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.icon;
-            pictureBox1.Location = new Point(6, 94);
+            pictureBox1.Location = new Point(406, 6);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(518, 74);
+            pictureBox1.Size = new Size(113, 107);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 3;
             pictureBox1.TabStop = false;
@@ -151,11 +148,10 @@
             // 
             SettingsPage.Controls.Add(groupBox4);
             SettingsPage.Controls.Add(groupBox3);
-            SettingsPage.Controls.Add(groupBox2);
             SettingsPage.Location = new Point(4, 24);
             SettingsPage.Name = "SettingsPage";
             SettingsPage.Padding = new Padding(3);
-            SettingsPage.Size = new Size(530, 174);
+            SettingsPage.Size = new Size(522, 113);
             SettingsPage.TabIndex = 1;
             SettingsPage.Text = "Settings";
             SettingsPage.UseVisualStyleBackColor = true;
@@ -164,7 +160,7 @@
             // 
             groupBox4.Controls.Add(legacyPathLabel);
             groupBox4.Controls.Add(settingsLegacyPath);
-            groupBox4.Location = new Point(6, 119);
+            groupBox4.Location = new Point(6, 60);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(518, 47);
             groupBox4.TabIndex = 3;
@@ -193,7 +189,7 @@
             // 
             groupBox3.Controls.Add(enhancedPathLabel);
             groupBox3.Controls.Add(settingsEnhancedPath);
-            groupBox3.Location = new Point(6, 65);
+            groupBox3.Location = new Point(6, 6);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(518, 48);
             groupBox3.TabIndex = 2;
@@ -218,40 +214,11 @@
             settingsEnhancedPath.UseVisualStyleBackColor = true;
             settingsEnhancedPath.Click += settingsEnhancedPath_Click;
             // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(ragemp_path_label);
-            groupBox2.Controls.Add(settingsRagePath);
-            groupBox2.Location = new Point(6, 8);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(518, 51);
-            groupBox2.TabIndex = 1;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "RAGEMP Path";
-            // 
-            // ragemp_path_label
-            // 
-            ragemp_path_label.Location = new Point(9, 22);
-            ragemp_path_label.Name = "ragemp_path_label";
-            ragemp_path_label.Size = new Size(441, 19);
-            ragemp_path_label.TabIndex = 1;
-            ragemp_path_label.Text = "RAGE MP Path";
-            // 
-            // settingsRagePath
-            // 
-            settingsRagePath.Location = new Point(456, 18);
-            settingsRagePath.Name = "settingsRagePath";
-            settingsRagePath.Size = new Size(56, 23);
-            settingsRagePath.TabIndex = 0;
-            settingsRagePath.Text = "Change";
-            settingsRagePath.UseVisualStyleBackColor = true;
-            settingsRagePath.Click += settingsRagePath_Click;
-            // 
             // RAGEMPdevLauncher
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(553, 218);
+            ClientSize = new Size(544, 155);
             Controls.Add(tabControl);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -267,7 +234,6 @@
             SettingsPage.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -281,9 +247,6 @@
         private TabControl tabControl;
         private TabPage LauncherPage;
         private TabPage SettingsPage;
-        private Button settingsRagePath;
-        private GroupBox groupBox2;
-        private Label ragemp_path_label;
         private GroupBox groupBox3;
         private Label enhancedPathLabel;
         private Button settingsEnhancedPath;
