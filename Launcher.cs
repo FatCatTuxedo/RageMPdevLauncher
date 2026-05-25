@@ -7,7 +7,7 @@ namespace RageMPdevLauncher
 {
     public partial class RAGEMPdevLauncher : Form
     {
-        string subKeyPath = "Software//RAGE-MP";
+        string subKeyPath = "Software\\RAGE-MP";
         string? legacyPath = ConfigurationManager.AppSettings["legacy_path"];
         string? enhancedPath = ConfigurationManager.AppSettings["enhanced_path"];
         string? ragempPath = ConfigurationManager.AppSettings["ragemp_path"];
@@ -18,6 +18,7 @@ namespace RageMPdevLauncher
             string? game_v_path = null;
             string? cefPort = null;
             ragemp_path_label.Text = ragempPath != null ? ragempPath : "Not Set";
+            legacyPathLabel.Text = legacyPath != null ? legacyPath : "Not Set";
             enhancedPathLabel.Text = enhancedPath != null ? enhancedPath : "Not Set";
             try
             {
@@ -33,13 +34,13 @@ namespace RageMPdevLauncher
                         }
                         if (game_v_path != null)
                         {
-                            if (game_v_path.Contains("legacy"))
+                            if (game_v_path.Contains("Enhanced"))
                             {
-                                legacy.Checked = true;
+                                enhanced.Checked = true;
                             }
                             else
                             {
-                                enhanced.Checked = true;
+                                legacy.Checked = true;
                             }
                         }
                         else
@@ -47,6 +48,8 @@ namespace RageMPdevLauncher
                             legacy.Checked = true;
                         }
                     }
+                    else
+                        MessageBox.Show("An error occurred while reading the registry: RageMP key not found");
                 }
             }
             catch (Exception ex)
@@ -87,7 +90,7 @@ namespace RageMPdevLauncher
             {
                 if (string.IsNullOrEmpty(legacyPath))
                 {
-                    MessageBox.Show("Enhanced Path is not set in the configuration file.");
+                    MessageBox.Show("Legacy Path is not set in the configuration file.");
                     return;
                 }
                 using RegistryKey? myKey = Registry.CurrentUser.OpenSubKey(subKeyPath, true);
@@ -205,6 +208,33 @@ namespace RageMPdevLauncher
                 else
                 {
                     MessageBox.Show("The selected folder does not contain GTA5_Enhanced.exe. Please select the correct GTA V Enhanced folder.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Cancelled, the path was not changed.");
+            }
+        }
+
+        private void settingsLegacyPath_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderDlg = new FolderBrowserDialog();
+            folderDlg.ShowNewFolderButton = false;
+            folderDlg.UseDescriptionForTitle = true;
+            folderDlg.Description = "Select your GTA V Legacy folder (where GTA5.exe is located)";
+            folderDlg.SelectedPath = legacyPath != null ? legacyPath : Environment.SpecialFolder.MyComputer.ToString();
+            DialogResult result = folderDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (File.Exists(folderDlg.SelectedPath + "/GTA5.exe"))
+                {
+                    MessageBox.Show("GTA V Legacy Path set to: " + folderDlg.SelectedPath);
+                    legacyPath = folderDlg.SelectedPath;
+                    ConfigurationManager.AppSettings["legacy_path"] = legacyPath;
+                }
+                else
+                {
+                    MessageBox.Show("The selected folder does not contain GTA5.exe. Please select the correct GTA V Legacy folder.");
                 }
             }
             else

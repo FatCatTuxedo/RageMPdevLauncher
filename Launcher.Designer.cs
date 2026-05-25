@@ -36,23 +36,25 @@
             launch = new Button();
             tabControl = new TabControl();
             LauncherPage = new TabPage();
+            pictureBox1 = new PictureBox();
             SettingsPage = new TabPage();
+            groupBox4 = new GroupBox();
+            legacyPathLabel = new Label();
+            settingsLegacyPath = new Button();
             groupBox3 = new GroupBox();
             enhancedPathLabel = new Label();
             settingsEnhancedPath = new Button();
             groupBox2 = new GroupBox();
             ragemp_path_label = new Label();
             settingsRagePath = new Button();
-            groupBox4 = new GroupBox();
-            label1 = new Label();
-            button1 = new Button();
             groupBox1.SuspendLayout();
             tabControl.SuspendLayout();
             LauncherPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SettingsPage.SuspendLayout();
+            groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox2.SuspendLayout();
-            groupBox4.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -61,7 +63,7 @@
             groupBox1.Controls.Add(legacy);
             groupBox1.Location = new Point(6, 6);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(123, 82);
+            groupBox1.Size = new Size(376, 82);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Game Version";
@@ -93,7 +95,7 @@
             // cefDebug
             // 
             cefDebug.AutoSize = true;
-            cefDebug.Location = new Point(145, 17);
+            cefDebug.Location = new Point(393, 19);
             cefDebug.Name = "cefDebug";
             cefDebug.Size = new Size(101, 19);
             cefDebug.TabIndex = 1;
@@ -103,7 +105,7 @@
             // 
             // launch
             // 
-            launch.Location = new Point(145, 42);
+            launch.Location = new Point(388, 44);
             launch.Name = "launch";
             launch.Size = new Size(136, 41);
             launch.TabIndex = 2;
@@ -118,21 +120,32 @@
             tabControl.Location = new Point(12, 12);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
-            tabControl.Size = new Size(305, 268);
+            tabControl.Size = new Size(538, 202);
             tabControl.TabIndex = 3;
             // 
             // LauncherPage
             // 
+            LauncherPage.Controls.Add(pictureBox1);
             LauncherPage.Controls.Add(launch);
             LauncherPage.Controls.Add(groupBox1);
             LauncherPage.Controls.Add(cefDebug);
             LauncherPage.Location = new Point(4, 24);
             LauncherPage.Name = "LauncherPage";
             LauncherPage.Padding = new Padding(3);
-            LauncherPage.Size = new Size(297, 183);
+            LauncherPage.Size = new Size(530, 174);
             LauncherPage.TabIndex = 0;
             LauncherPage.Text = "Launcher";
             LauncherPage.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = Properties.Resources.icon;
+            pictureBox1.Location = new Point(6, 94);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(518, 74);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 3;
+            pictureBox1.TabStop = false;
             // 
             // SettingsPage
             // 
@@ -142,10 +155,39 @@
             SettingsPage.Location = new Point(4, 24);
             SettingsPage.Name = "SettingsPage";
             SettingsPage.Padding = new Padding(3);
-            SettingsPage.Size = new Size(297, 240);
+            SettingsPage.Size = new Size(530, 174);
             SettingsPage.TabIndex = 1;
             SettingsPage.Text = "Settings";
             SettingsPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(legacyPathLabel);
+            groupBox4.Controls.Add(settingsLegacyPath);
+            groupBox4.Location = new Point(6, 119);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(518, 47);
+            groupBox4.TabIndex = 3;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "GTA V Legacy Path";
+            // 
+            // legacyPathLabel
+            // 
+            legacyPathLabel.Location = new Point(9, 22);
+            legacyPathLabel.Name = "legacyPathLabel";
+            legacyPathLabel.Size = new Size(441, 19);
+            legacyPathLabel.TabIndex = 1;
+            legacyPathLabel.Text = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Grand Theft Auto V";
+            // 
+            // settingsLegacyPath
+            // 
+            settingsLegacyPath.Location = new Point(456, 18);
+            settingsLegacyPath.Name = "settingsLegacyPath";
+            settingsLegacyPath.Size = new Size(56, 23);
+            settingsLegacyPath.TabIndex = 0;
+            settingsLegacyPath.Text = "Change";
+            settingsLegacyPath.UseVisualStyleBackColor = true;
+            settingsLegacyPath.Click += settingsLegacyPath_Click;
             // 
             // groupBox3
             // 
@@ -153,7 +195,7 @@
             groupBox3.Controls.Add(settingsEnhancedPath);
             groupBox3.Location = new Point(6, 65);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(285, 65);
+            groupBox3.Size = new Size(518, 48);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "GTA V Enhanced Path";
@@ -162,13 +204,13 @@
             // 
             enhancedPathLabel.Location = new Point(9, 22);
             enhancedPathLabel.Name = "enhancedPathLabel";
-            enhancedPathLabel.Size = new Size(208, 40);
+            enhancedPathLabel.Size = new Size(442, 19);
             enhancedPathLabel.TabIndex = 1;
             enhancedPathLabel.Text = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Grand Theft Auto V Enhanced";
             // 
             // settingsEnhancedPath
             // 
-            settingsEnhancedPath.Location = new Point(223, 36);
+            settingsEnhancedPath.Location = new Point(457, 18);
             settingsEnhancedPath.Name = "settingsEnhancedPath";
             settingsEnhancedPath.Size = new Size(56, 23);
             settingsEnhancedPath.TabIndex = 0;
@@ -182,7 +224,7 @@
             groupBox2.Controls.Add(settingsRagePath);
             groupBox2.Location = new Point(6, 8);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(285, 51);
+            groupBox2.Size = new Size(518, 51);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "RAGEMP Path";
@@ -191,13 +233,13 @@
             // 
             ragemp_path_label.Location = new Point(9, 22);
             ragemp_path_label.Name = "ragemp_path_label";
-            ragemp_path_label.Size = new Size(208, 22);
+            ragemp_path_label.Size = new Size(441, 19);
             ragemp_path_label.TabIndex = 1;
             ragemp_path_label.Text = "RAGE MP Path";
             // 
             // settingsRagePath
             // 
-            settingsRagePath.Location = new Point(223, 22);
+            settingsRagePath.Location = new Point(456, 18);
             settingsRagePath.Name = "settingsRagePath";
             settingsRagePath.Size = new Size(56, 23);
             settingsRagePath.TabIndex = 0;
@@ -205,39 +247,11 @@
             settingsRagePath.UseVisualStyleBackColor = true;
             settingsRagePath.Click += settingsRagePath_Click;
             // 
-            // groupBox4
-            // 
-            groupBox4.Controls.Add(label1);
-            groupBox4.Controls.Add(button1);
-            groupBox4.Location = new Point(6, 136);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(285, 65);
-            groupBox4.TabIndex = 3;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "GTA V Legacy Path";
-            // 
-            // label1
-            // 
-            label1.Location = new Point(9, 22);
-            label1.Name = "label1";
-            label1.Size = new Size(208, 40);
-            label1.TabIndex = 1;
-            label1.Text = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Grand Theft Auto V";
-            // 
-            // button1
-            // 
-            button1.Location = new Point(223, 36);
-            button1.Name = "button1";
-            button1.Size = new Size(56, 23);
-            button1.TabIndex = 0;
-            button1.Text = "Change";
-            button1.UseVisualStyleBackColor = true;
-            // 
             // RAGEMPdevLauncher
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(334, 292);
+            ClientSize = new Size(553, 218);
             Controls.Add(tabControl);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -249,10 +263,11 @@
             tabControl.ResumeLayout(false);
             LauncherPage.ResumeLayout(false);
             LauncherPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             SettingsPage.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
-            groupBox4.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -273,7 +288,8 @@
         private Label enhancedPathLabel;
         private Button settingsEnhancedPath;
         private GroupBox groupBox4;
-        private Label label1;
-        private Button button1;
+        private Label legacyPathLabel;
+        private Button settingsLegacyPath;
+        private PictureBox pictureBox1;
     }
 }
