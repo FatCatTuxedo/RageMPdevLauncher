@@ -8,6 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>RageMPdevLauncher.Program</StartupObject>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AssemblyVersion>1.2</AssemblyVersion>
+    <Version>1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
